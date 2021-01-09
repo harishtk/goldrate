@@ -1,0 +1,130 @@
+plugins {
+    id("com.android.application")
+}
+
+ext {
+    applicationId = "com.harishtk.goldrate.app"
+    minSdkVersion = 21
+    compileSdkVersion = 30
+    versionMajor = 0                // major changes
+    versionMinor = 0                // minor changes
+    versionPatch = 1                // bug fixes
+    versionClassifier = "beta"      // version classifier eg. alpha (a), beta (b)
+    isSnapshot = false              // test build before production
+}
+
+android {
+
+    applicationVariants.all { variants ->
+        variants.outputs.all { output ->
+            def appName = "Gold Rate"
+            outputFileName = new File(appName + ".apk")
+        }
+    }
+
+    signingConfigs {
+        release {
+            storeFile(file("keystore/goldrate.keystore"))
+            keyAlias("PointBreak")
+            storePassword("PointBreak")
+            keyPassword("PointBreak")
+        }
+    }
+
+    compileSdkVersion(project.ext.compileSdkVersion)
+
+    defaultConfig {
+        applicationId(project.ext.applicationId)
+        minSdkVersion(project.ext.minSdkVersion)
+        targetSdkVersion(project.ext.compileSdkVersion)
+        versionCode(project.getVersionCode())
+        versionName(project.getVersionName())
+        multiDexEnabled(true)
+        signingConfig(signingConfigs.release)
+        resConfigs("en")
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility(JavaVersion.VERSION_1_8)
+        targetCompatibility(JavaVersion.VERSION_1_8)
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.annotation:annotation:1.1.0'
+    implementation "com.google.code.gson:gson:2.8.6"
+
+    implementation "com.google.guava:guava:30.0-android"
+    implementation "com.google.protobuf:protobuf-lite:3.0.1"
+    implementation "com.annimon:stream:1.2.1"
+
+    // Work
+    def work_version = "2.4.0"
+    implementation "androidx.work:work-runtime:$work_version"
+
+    // Okhttp
+    implementation("com.squareup.okhttp3:okhttp:4.7.2")
+    implementation('com.squareup.okhttp3:logging-interceptor:4.7.2')
+
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    implementation 'jp.wasabeef:glide-transformations:3.3.0'
+
+    // Timber
+    implementation("com.jakewharton.timber:timber:4.7.1")
+
+    // Unit testing
+    testImplementation 'androidx.test.ext:junit:1.1.2'
+    testImplementation 'androidx.test:rules:1.3.0'
+    testImplementation 'androidx.test:runner:1.3.0'
+    testImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    testImplementation "org.robolectric:robolectric:4.4"
+    testImplementation 'junit:junit:4.13.1'
+
+    // Instrumented testing
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test:rules:1.3.0'
+    androidTestImplementation 'androidx.test:runner:1.3.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    androidTestImplementation 'androidx.test:runner:1.3.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+}
+
+@SuppressWarnings('GrMethodMayBeStatic')
+private Integer getVersionCode() {
+    return ext.minSdkVersion * 10000000 + ext.versionMajor * 10000 + ext.versionMinor * 100 +
+            ext.versionPatch
+}
+
+@SuppressWarnings('GrMethodMayBeStatic')
+private String getVersionName() {
+    String versionName = "${ext.versionMajor}.${ext.versionMinor}.${ext.versionPatch}"
+
+    if (ext.versionClassifier == null && ext.isSnapshot) {
+        ext.versionClassifier = "SNAPSHOT"
+    }
+
+    if (ext.versionClassifier != null) {
+        versionName += "-" + ext.versionClassifier
+    }
+
+    if (ext.isSnapshot) versionName += "-" + "SNAPSHOT"
+
+    return versionName
+}
