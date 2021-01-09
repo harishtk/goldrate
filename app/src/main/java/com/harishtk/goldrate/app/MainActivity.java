@@ -1,14 +1,5 @@
 package com.harishtk.goldrate.app;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.work.ExistingPeriodicWorkPolicy;
-import androidx.work.ExistingWorkPolicy;
-import androidx.work.WorkManager;
-
 import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -18,18 +9,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import com.harishtk.goldrate.app.thread.BackgroundThreadFactory;
-import com.harishtk.goldrate.app.thread.GoldSpiderCallable;
-import com.harishtk.goldrate.app.util.guava.Optional;
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.WorkManager;
+
 import com.harishtk.goldrate.app.work.GoldRateWorker;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
 

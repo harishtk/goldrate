@@ -7,7 +7,6 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.telephony.SmsManager;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -31,6 +30,7 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+@SuppressWarnings({"unused", "RedundantSuppression"})
 public class GoldRateWorker extends Worker {
     private static final String TAG = GoldRateWorker.class.getSimpleName();
 
@@ -44,7 +44,7 @@ public class GoldRateWorker extends Worker {
 
     public static final String CRAWL_URL = "https://thangamayil.com";
 
-    private Context mContext;
+    private final Context mContext;
 
     private GoldRateWorker(@NonNull Context context, @NonNull WorkerParameters parameters) {
         super(context, parameters);
@@ -67,29 +67,28 @@ public class GoldRateWorker extends Worker {
             // show notification
             Notification notification = new NotificationCompat.Builder(mContext,
                     mContext.getString(R.string.notification_channel))
-                    .setContentTitle("Gold Rate Updates")
-                    .setContentText("Today gold rate for " + KEY_GOLD_22K + ": " + val)
+                    .setContentTitle(mContext.getString(R.string.gold_rate_updates))
+                    .setContentText(mContext.getString(R.string.current_gold_rate, KEY_GOLD_22K, val))
                     .setSmallIcon(R.drawable.ic_gold_coin)
+                    .setAutoCancel(false)
                     .build();
             NotificationManager manager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
             manager.notify(Constants.NOTIFICATION_ID, notification);
 
-            sendSms(KEY_GOLD_22K, val);
+            sendSms(val);
             return Result.success();
         } else {
             return Result.failure();
         }
     }
 
-    private void sendSms(String keyGold22k, String val) {
+    private void sendSms(String val) {
         String phoneNo = "9944194330";
         String msg = "Gold Rate Updates\n" + "Today gold rate for " + KEY_GOLD_22K + ": " + val;
         try {
             SmsManager smsManager = SmsManager.getDefault();
             smsManager.sendTextMessage(phoneNo, null, msg, null, null);
         } catch (Exception ex) {
-            Toast.makeText(getApplicationContext(),ex.getMessage().toString(),
-                    Toast.LENGTH_LONG).show();
             ex.printStackTrace();
         }
     }
@@ -138,7 +137,7 @@ public class GoldRateWorker extends Worker {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 constraintsBuilder.setTriggerContentMaxDelay(Duration.ZERO);
             }
-            periodicWorkRequest = new PeriodicWorkRequest.Builder(GoldRateWorker.class, 15, TimeUnit.MINUTES)
+            periodicWorkRequest = new PeriodicWorkRequest.Builder(GoldRateWorker.class, 6, TimeUnit.HOURS)
                     .setInputData(data)
                     .setConstraints(constraintsBuilder.build())
                     .addTag(WORKER_TAG)

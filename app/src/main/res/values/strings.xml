@@ -6,4 +6,6 @@
 
     <string name="notification_channel">gold-rate-notification</string>
     <string name="notification_title">Gold Rate Updates</string>
+    <string name="gold_rate_updates">Gold Rate Updates</string>
+    <string name="current_gold_rate">Current gold rate for %1$s %2$s</string>
 </resources>
