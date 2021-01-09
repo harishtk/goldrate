@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Gold Rate</string>
+    <string name="worker_notification_channel">Gold Rate</string>
+    <string name="worker_notification_title">Gold Rate</string>
+    <string name="fetching_gold_rates">Fetching gold rates</string>
+
+    <string name="notification_channel">gold-rate-notification</string>
+    <string name="notification_title">Gold Rate Updates</string>
 </resources>

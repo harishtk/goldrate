@@ -22,7 +22,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import timber.log.Timber;
 
-public class GoldSpiderCallable<T> implements Callable<T> {
+public class GoldSpiderCallable<T extends Optional<Map<String, String>>> implements Callable<Optional<Map<String, String>>> {
 
     private static final String TAG = GoldSpiderCallable.class.getSimpleName();
 
@@ -50,8 +50,10 @@ public class GoldSpiderCallable<T> implements Callable<T> {
     }
 
     @Override
-    public T call() {
+    public Optional<Map<String, String>> call() {
         final String url = mBundle.getString("url");
+        Optional<Map<String, String>> optional = Optional.absent();
+
         try {
             if (url == null) throw new IllegalArgumentException("No URL");
             Log.d(TAG, String.format("Crawling: url %s", url));
@@ -63,11 +65,8 @@ public class GoldSpiderCallable<T> implements Callable<T> {
 
             String           body        = OkHttpUtil.readAsString(response.body(), FAILSAFE_MAX_TEXT_SIZE);
             Map<String, String> rateMap = LinkPreviewUtil.parseGoldRates(body);
-            final Optional<Map<String, String>> optional;
             if (rateMap.keySet().size() > 0) {
                 optional = Optional.of(rateMap);
-            } else {
-                optional = Optional.absent();
             }
 
             Timber.d("Spider: %s", rateMap);
@@ -86,7 +85,7 @@ public class GoldSpiderCallable<T> implements Callable<T> {
                 mCallback.onError(Error.PREVIEW_NOT_AVAILABLE, e);
             }
         }
-        return null;
+        return optional;
     }
 
     public void setCallback(@NonNull Callback callback) {
