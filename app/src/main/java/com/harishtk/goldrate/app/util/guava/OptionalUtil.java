@@ -1,7 +1,5 @@
 package com.harishtk.goldrate.app.util.guava;
 
-import com.google.protobuf.ByteString;
-
 import java.util.Arrays;
 
 public final class OptionalUtil {
@@ -38,14 +36,6 @@ public final class OptionalUtil {
             return Optional.of(defValue);
         } else {
             return Optional.of(value);
-        }
-    }
-
-    public static Optional<byte[]> absentIfEmpty(ByteString value) {
-        if (value == null || value.isEmpty()) {
-            return Optional.absent();
-        } else {
-            return Optional.of(value.toByteArray());
         }
     }
 }

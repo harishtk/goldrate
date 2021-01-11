@@ -17,13 +17,13 @@
 package com.harishtk.goldrate.app.util.guava;
 
 
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
+import androidx.arch.core.util.Function;
+import androidx.core.util.Supplier;
 
 import java.util.Collections;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static androidx.core.util.Preconditions.checkNotNull;
 
 /**
  * Implementation of an {@link Optional} containing a reference.

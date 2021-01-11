@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,7 +52,7 @@ public final class LinkPreviewUtil {
   private static final Pattern GOLD_RATE_22K_PATTERN0      = Pattern.compile("<\\s*li[^>]*><\\s*span[^>]*>Gold 22k</span><\\s*span[^>]*><\\s*span\\s*class=\"price\"[^>]*>");
   // <li style="margin-left: 8%;"><span class="left">Gold 22k</span><span><span class="price">₹4,754</span></span></li>
 
-  private static final Set<String> INVALID_TOP_LEVEL_DOMAINS = SetUtil.newHashSet("onion", "i2p");
+  private static final Set<String> INVALID_TOP_LEVEL_DOMAINS = Collections.unmodifiableSet(new HashSet<String>(){{add("onion"); add("i2p");}});
 
   /**
    * @return All whitelisted URLs in the source text.

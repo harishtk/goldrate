@@ -64,7 +64,7 @@ public class GoldSpiderCallable<T extends Optional<Map<String, String>>> impleme
             if (!(code >= 200 && code < 300)) throw new IOException("Unexpected response for " + request.url());
 
             String           body        = OkHttpUtil.readAsString(response.body(), FAILSAFE_MAX_TEXT_SIZE);
-            Map<String, String> rateMap = LinkPreviewUtil.parseGoldRates(body);
+            Map<String, String> rateMap  = LinkPreviewUtil.parseGoldRates(body);
             if (rateMap.keySet().size() > 0) {
                 optional = Optional.of(rateMap);
             }

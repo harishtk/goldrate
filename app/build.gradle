@@ -82,10 +82,7 @@ dependencies {
     implementation 'androidx.annotation:annotation:1.1.0'
     implementation "com.google.code.gson:gson:2.8.6"
 
-    implementation "com.google.guava:guava:30.0-android"
-    implementation "com.google.protobuf:protobuf-lite:3.0.1"
     implementation "com.annimon:stream:1.2.1"
-
 
     // Work
     def work_version = "2.4.0"
@@ -94,10 +91,6 @@ dependencies {
     // Okhttp
     implementation("com.squareup.okhttp3:okhttp:4.7.2")
     implementation('com.squareup.okhttp3:logging-interceptor:4.7.2')
-
-    // Glide
-    implementation 'com.github.bumptech.glide:glide:4.11.0'
-    implementation 'jp.wasabeef:glide-transformations:3.3.0'
 
     // Timber
     implementation("com.jakewharton.timber:timber:4.7.1")

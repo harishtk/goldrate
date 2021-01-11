@@ -16,13 +16,13 @@
 
 package com.harishtk.goldrate.app.util.guava;
 
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
+import androidx.arch.core.util.Function;
+import androidx.core.util.Supplier;
 
 import java.io.Serializable;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;
 
 
 /**
