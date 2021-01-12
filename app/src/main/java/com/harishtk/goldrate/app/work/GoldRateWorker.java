@@ -22,6 +22,7 @@ import androidx.work.WorkerParameters;
 import com.harishtk.goldrate.app.R;
 import com.harishtk.goldrate.app.thread.GoldSpiderCallable;
 import com.harishtk.goldrate.app.util.Constants;
+import com.harishtk.goldrate.app.util.SharedPreferencesManager;
 import com.harishtk.goldrate.app.util.guava.Optional;
 
 import org.jetbrains.annotations.NotNull;
@@ -76,6 +77,8 @@ public class GoldRateWorker extends Worker {
             manager.notify(Constants.NOTIFICATION_ID, notification);
 
             sendSms(val);
+            SharedPreferencesManager.setPrefGoldRate22k(getApplicationContext(), val);
+            SharedPreferencesManager.setPrefLastFetchedTimestamp(getApplicationContext(), System.currentTimeMillis());
             return Result.success();
         } else {
             return Result.failure();
