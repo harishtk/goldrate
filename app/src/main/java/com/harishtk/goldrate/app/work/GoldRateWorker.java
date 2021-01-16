@@ -140,7 +140,7 @@ public class GoldRateWorker extends Worker {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 constraintsBuilder.setTriggerContentMaxDelay(Duration.ZERO);
             }
-            periodicWorkRequest = new PeriodicWorkRequest.Builder(GoldRateWorker.class, 6, TimeUnit.HOURS)
+            periodicWorkRequest = new PeriodicWorkRequest.Builder(GoldRateWorker.class, 15, TimeUnit.MINUTES)
                     .setInputData(data)
                     .setConstraints(constraintsBuilder.build())
                     .addTag(WORKER_TAG)

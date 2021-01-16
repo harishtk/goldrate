@@ -44,6 +44,6 @@ public class SharedPreferencesManager {
 
     public static void setPrefLastFetchedTimestamp(Context context, long timestamp) {
         getSharedPreferences(context).edit()
-                .putLong(PREF_GOLD_RATE_22K, timestamp).apply();
+                .putLong(PREF_LAST_FETCHED_TIMESTAMP, timestamp).apply();
     }
 }
