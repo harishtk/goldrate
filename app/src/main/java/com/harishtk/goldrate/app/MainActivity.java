@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         final String val = SharedPreferencesManager.getPrefGoldRate22k(this);
         final long timestamp = SharedPreferencesManager.getPrefLastFetchedTimestamp(this);
         viewBinding.time.setText(new SimpleDateFormat("HH:mm:ss aa dd MMM yyyy").format(timestamp));
-        viewBinding.time.setText("22k: " + val);
+        viewBinding.goldRate.setText("22k: " + val);
     }
 
     private void checkSmsPermission() {
