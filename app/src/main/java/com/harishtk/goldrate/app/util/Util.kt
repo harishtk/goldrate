@@ -1,46 +1,40 @@
-package com.harishtk.goldrate.app.util;
+package com.harishtk.goldrate.app.util
 
-import android.content.Context;
-import android.util.DisplayMetrics;
+import android.content.Context
+import android.util.DisplayMetrics
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import java.util.Collection;
-
-public class Util {
-
-    private Util() {}
-
-    public static boolean isEmpty(EncodedStringValue[] value) {
-        return value == null || value.length == 0;
+object Util {
+    fun isEmpty(value: Array<EncodedStringValue?>?): Boolean {
+        return value == null || value.isEmpty()
     }
 
-    public static boolean isEmpty(Collection<?> collection) {
-        return collection == null || collection.isEmpty();
+    fun isEmpty(collection: Collection<*>?): Boolean {
+        return collection == null || collection.isEmpty()
     }
 
-    public static boolean isEmpty(@Nullable String value) {
-        return value == null || value.length() == 0;
+    @JvmStatic
+    fun isEmpty(value: String?): Boolean {
+        return value == null || value.length == 0
     }
 
-    public static boolean hasItems(@Nullable Collection<?> collection) {
-        return collection != null && !collection.isEmpty();
+    fun hasItems(collection: Collection<*>?): Boolean {
+        return collection != null && !collection.isEmpty()
     }
 
-    public static String getFirstNonEmpty(String... values) {
-        for (String value : values) {
+    @JvmStatic
+    fun getFirstNonEmpty(vararg values: String?): String? {
+        for (value in values) {
             if (!isEmpty(value)) {
-                return value;
+                return value
             }
         }
-        return "";
+        return ""
     }
 
-    private static final String PRE_DOMAIN_PATTERN = "http(?:s)?://";
-    public static boolean urlMatches(@NonNull String s1, @NonNull String s2) {
-        return s1.replaceAll(PRE_DOMAIN_PATTERN, "")
-                .equalsIgnoreCase(s2.replaceAll(PRE_DOMAIN_PATTERN, ""));
+    private const val PRE_DOMAIN_PATTERN = "http(?:s)?://"
+    fun urlMatches(s1: String, s2: String): Boolean {
+        return s1.replace(PRE_DOMAIN_PATTERN.toRegex(), "")
+                .equals(s2.replace(PRE_DOMAIN_PATTERN.toRegex(), ""), ignoreCase = true)
     }
 
     /**
@@ -50,8 +44,8 @@ public class Util {
      * @param context Context to get resources and device specific display metrics
      * @return A float value to represent px equivalent to dp depending on device density
      */
-    public static float convertDpToPixel(float dp, Context context) {
-        return dp * ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+    fun convertDpToPixel(dp: Float, context: Context): Float {
+        return dp * (context.resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
     }
 
     /**
@@ -61,8 +55,7 @@ public class Util {
      * @param context Context to get resources and device specific display metrics
      * @return A float value to represent dp equivalent to px value
      */
-    @SuppressWarnings({"unused", "RedundantSuppression"})
-    public static float convertPixelsToDp(float px, Context context) {
-        return px / ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+    fun convertPixelsToDp(px: Float, context: Context): Float {
+        return px / (context.resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
     }
 }

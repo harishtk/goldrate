@@ -14,51 +14,48 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.harishtk.goldrate.app.util;
+package com.harishtk.goldrate.app.util
 
-import android.annotation.SuppressLint;
-import android.os.Build;
-import android.util.Log;
-
-import androidx.annotation.Nullable;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
+import android.annotation.SuppressLint
+import android.os.Build
+import android.util.Log
+import com.harishtk.goldrate.app.util.Util.isEmpty
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Utility methods to help display dates in a nice, easily readable way.
  */
-public class DateUtils extends android.text.format.DateUtils {
+object DateUtils : android.text.format.DateUtils() {
+    private val TAG = DateUtils::class.java.simpleName
 
-  private static final String           TAG                = DateUtils.class.getSimpleName();
-
-  /**
-   * e.g. 2020-09-04T19:17:51Z
-   * https://www.iso.org/iso-8601-date-and-time-format.html
-   *
-   * Note: SDK_INT == 0 check needed to pass unit tests due to JVM date parser differences.
-   *
-   * @return The timestamp if able to be parsed, otherwise -1.
-   */
-  @SuppressLint("ObsoleteSdkInt")
-  public static long parseIso8601(@Nullable String date) {
-    SimpleDateFormat format;
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-      format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX", Locale.getDefault());
-    } else {
-      format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault());
+    /**
+     * e.g. 2020-09-04T19:17:51Z
+     * https://www.iso.org/iso-8601-date-and-time-format.html
+     *
+     * Note: SDK_INT == 0 check needed to pass unit tests due to JVM date parser differences.
+     *
+     * @return The timestamp if able to be parsed, otherwise -1.
+     */
+    @JvmStatic
+    @SuppressLint("ObsoleteSdkInt")
+    fun parseIso8601(date: String?): Long? {
+        val format: SimpleDateFormat = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX", Locale.getDefault())
+        } else {
+            SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault())
+        }
+        return if (isEmpty(date)) {
+            -1
+        } else try {
+            format.parse(date!!)?.time
+        } catch (e: ParseException) {
+            Log.w(TAG, "Failed to parse date.", e)
+            -1
+        } catch (e: NullPointerException) {
+            Log.w(TAG, "Failed to parse date.", e)
+            -1
+        }
     }
-
-    if (Util.isEmpty(date)) {
-      return -1;
-    }
-
-    try {
-      return format.parse(date).getTime();
-    } catch (ParseException | NullPointerException e) {
-      Log.w(TAG, "Failed to parse date.", e);
-      return -1;
-    }
-  }
 }

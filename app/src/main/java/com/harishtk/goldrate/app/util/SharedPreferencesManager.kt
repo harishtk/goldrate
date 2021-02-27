@@ -1,49 +1,45 @@
-package com.harishtk.goldrate.app.util;
+package com.harishtk.goldrate.app.util
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.Context
+import android.content.SharedPreferences
 
-public class SharedPreferencesManager {
-
-    private static SharedPreferences sInstance;
-
-    private static final String APP_SETTINGS = "APP_SETTINGS";
+object SharedPreferencesManager {
+    private var sInstance: SharedPreferences? = null
+    private const val APP_SETTINGS = "APP_SETTINGS"
 
     // properties
-    private static final String PREF_GOLD_RATE_22K = "pref-gold-rate-22k";
-    private static final String PREF_LAST_FETCHED_TIMESTAMP = "pref-last-fetched-timestamp";
-    // other properties...
-
-    private SharedPreferencesManager() {
-
+    private const val PREF_GOLD_RATE_22K = "pref-gold-rate-22k"
+    private const val PREF_LAST_FETCHED_TIMESTAMP = "pref-last-fetched-timestamp"
+    fun reset(context: Context) {
+        getSharedPreferences(context)!!.edit().clear().apply()
     }
 
-    public static void reset(Context context) {
-        getSharedPreferences(context).edit().clear().apply();
-    }
-
-    private static SharedPreferences getSharedPreferences(Context context) {
+    private fun getSharedPreferences(context: Context): SharedPreferences? {
         if (sInstance == null) {
-            sInstance = context.getSharedPreferences(APP_SETTINGS, Context.MODE_PRIVATE);
+            sInstance = context.getSharedPreferences(APP_SETTINGS, Context.MODE_PRIVATE)
         }
-        return sInstance;
+        return sInstance
     }
 
-    public static String getPrefGoldRate22k(Context context) {
-        return getSharedPreferences(context).getString(PREF_GOLD_RATE_22K, "N/A");
+    @JvmStatic
+    fun getPrefGoldRate22k(context: Context): String? {
+        return getSharedPreferences(context)!!.getString(PREF_GOLD_RATE_22K, "N/A")
     }
 
-    public static void setPrefGoldRate22k(Context context, String newValue) {
-        getSharedPreferences(context).edit()
-                .putString(PREF_GOLD_RATE_22K, newValue).apply();
+    @JvmStatic
+    fun setPrefGoldRate22k(context: Context, newValue: String?) {
+        getSharedPreferences(context)!!.edit()
+                .putString(PREF_GOLD_RATE_22K, newValue).apply()
     }
 
-    public static long getPrefLastFetchedTimestamp(Context context) {
-        return getSharedPreferences(context).getLong(PREF_LAST_FETCHED_TIMESTAMP, 0L);
+    @JvmStatic
+    fun getPrefLastFetchedTimestamp(context: Context): Long {
+        return getSharedPreferences(context)!!.getLong(PREF_LAST_FETCHED_TIMESTAMP, 0L)
     }
 
-    public static void setPrefLastFetchedTimestamp(Context context, long timestamp) {
-        getSharedPreferences(context).edit()
-                .putLong(PREF_LAST_FETCHED_TIMESTAMP, timestamp).apply();
+    @JvmStatic
+    fun setPrefLastFetchedTimestamp(context: Context, timestamp: Long) {
+        getSharedPreferences(context)!!.edit()
+                .putLong(PREF_LAST_FETCHED_TIMESTAMP, timestamp).apply()
     }
 }

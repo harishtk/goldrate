@@ -8,4 +8,5 @@
     <string name="notification_title">Gold Rate Updates</string>
     <string name="gold_rate_updates">Gold Rate Updates</string>
     <string name="current_gold_rate">Current gold rate for %1$s %2$s</string>
+    <string name="note">You will receive a notification as soon as on any update.</string>
 </resources>

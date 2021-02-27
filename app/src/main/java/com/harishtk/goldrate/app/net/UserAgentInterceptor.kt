@@ -1,24 +1,15 @@
-package com.harishtk.goldrate.app.net;
+package com.harishtk.goldrate.app.net
 
-import androidx.annotation.NonNull;
+import okhttp3.Interceptor
+import okhttp3.Response
+import java.io.IOException
+import kotlin.Throws
 
-import java.io.IOException;
-
-import okhttp3.Interceptor;
-import okhttp3.Response;
-
-public class UserAgentInterceptor implements Interceptor {
-
-    private final String userAgent;
-
-    public UserAgentInterceptor(@NonNull String userAgent) {
-        this.userAgent = userAgent;
-    }
-
-    @Override
-    public Response intercept(@NonNull Chain chain) throws IOException {
+class UserAgentInterceptor(private val userAgent: String) : Interceptor {
+    @Throws(IOException::class)
+    override fun intercept(chain: Interceptor.Chain): Response {
         return chain.proceed(chain.request().newBuilder()
                 .header("User-Agent", userAgent)
-                .build());
+                .build())
     }
 }

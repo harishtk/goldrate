@@ -1,5 +1,6 @@
 plugins {
     id("com.android.application")
+    id("kotlin-android")
 }
 
 ext {
@@ -81,6 +82,9 @@ android {
 dependencies {
     implementation(fileTree(include: ['*.jar', '*.aar'], dir: 'libs'))
 
+    implementation 'androidx.core:core-ktx:1.3.2'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
@@ -88,6 +92,7 @@ dependencies {
     implementation "com.google.code.gson:gson:2.8.6"
 
     implementation "com.annimon:stream:1.2.1"
+    implementation 'androidx.databinding:databinding-ktx:7.0.0-alpha08'
 
     // Work
     def work_version = "2.4.0"
