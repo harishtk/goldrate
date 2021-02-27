@@ -53,11 +53,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
     compileOptions {
-        sourceCompatibility(JavaVersion.VERSION_1_8)
-        targetCompatibility(JavaVersion.VERSION_1_8)
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
+
 
     lintOptions {
         // Returns whether lint should be quiet (for example, not write informational messages such as paths to report files written)
@@ -74,8 +74,15 @@ android {
         checkReleaseBuilds false
     }
 
+    kotlinOptions {
+        jvmTarget = '1.8'
+        useIR = true
+    }
     buildFeatures {
-        viewBinding(true)
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion compose_version
     }
 }
 
@@ -83,7 +90,8 @@ dependencies {
     implementation(fileTree(include: ['*.jar', '*.aar'], dir: 'libs'))
 
     implementation 'androidx.core:core-ktx:1.3.2'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+//    def kotlin_version = "1.4.30"
+//    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
@@ -91,8 +99,14 @@ dependencies {
     implementation 'androidx.annotation:annotation:1.1.0'
     implementation "com.google.code.gson:gson:2.8.6"
 
+
     implementation "com.annimon:stream:1.2.1"
     implementation 'androidx.databinding:databinding-ktx:7.0.0-alpha08'
+
+    implementation "androidx.compose.ui:ui:$compose_version"
+    implementation "androidx.compose.material:material:$compose_version"
+    implementation "androidx.compose.ui:ui-tooling:$compose_version"
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.0-alpha06'
 
     // Work
     def work_version = "2.4.0"
