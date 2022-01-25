@@ -10,20 +10,31 @@ import android.telephony.SmsManager
 import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import androidx.hilt.work.HiltWorker
 import androidx.work.*
 import com.harishtk.goldrate.app.R
+import com.harishtk.goldrate.app.data.entities.GoldrateEntry
+import com.harishtk.goldrate.app.data.respository.GoldrateRepository
 import com.harishtk.goldrate.app.thread.GoldSpiderCallable
 import com.harishtk.goldrate.app.util.Constants
 import com.harishtk.goldrate.app.util.SharedPreferencesManager.setPrefGoldRate22k
 import com.harishtk.goldrate.app.util.SharedPreferencesManager.setPrefLastFetchedTimestamp
 import com.harishtk.goldrate.app.util.guava.Optional
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import java.time.Duration
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-
-class GoldRateWorker constructor(
-        var context: Context,
-        workerParameters: WorkerParameters
+@HiltWorker
+class GoldRateWorker @AssistedInject constructor(
+    @Assisted var context: Context,
+    @Assisted workerParameters: WorkerParameters,
+    private val repository: GoldrateRepository
 ) : Worker(context, workerParameters) {
 
     @NonNull
@@ -46,6 +57,12 @@ class GoldRateWorker constructor(
             manager.notify(Constants.NOTIFICATION_ID, notification)
             if (`val` != null) {
                 sendSms(`val`)
+                val entry = GoldrateEntry(
+                    timestamp = System.currentTimeMillis(),
+                    type = KEY_GOLD_22K,
+                    price = `val`
+                )
+                runBlocking { repository.addEntry(entry) }
             }
             setPrefGoldRate22k(applicationContext, `val`)
             setPrefLastFetchedTimestamp(applicationContext, System.currentTimeMillis())

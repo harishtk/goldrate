@@ -16,18 +16,42 @@
         android:theme="@style/Theme.GoldRate">
         <activity
             android:name=".MainActivity"
-            android:theme="@style/Theme.GoldRate.NoActionBar">
+            android:theme="@style/Theme.GoldRate.NoActionBar"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".ui.screens.history.HistoryActivity"
+            android:theme="@style/Theme.GoldRate.NoActionBar"
+            android:exported="false" />
+
         <!-- Worker notification -->
         <service
             android:name="androidx.work.impl.foreground.SystemForegroundService"
             android:foregroundServiceType="dataSync"
             tools:node="merge" />
+
+        <!--<provider
+            android:name="androidx.work.impl.WorkManagerInitializer"
+            android:authorities="${applicationId}.workmanager-init"
+            android:enabled="false"
+            android:exported="false"
+            tools:node="remove" />-->
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx_startup"
+                tools:node="remove" />
+        </provider>
     </application>
 
 </manifest>
