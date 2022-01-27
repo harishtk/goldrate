@@ -14,7 +14,7 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.*
 import com.harishtk.goldrate.app.R
 import com.harishtk.goldrate.app.data.entities.GoldrateEntry
-import com.harishtk.goldrate.app.data.respository.GoldrateRepository
+import com.harishtk.goldrate.app.data.repository.GoldrateRepository
 import com.harishtk.goldrate.app.thread.GoldSpiderCallable
 import com.harishtk.goldrate.app.util.Constants
 import com.harishtk.goldrate.app.util.SharedPreferencesManager.setPrefGoldRate22k
@@ -22,8 +22,6 @@ import com.harishtk.goldrate.app.util.SharedPreferencesManager.setPrefLastFetche
 import com.harishtk.goldrate.app.util.guava.Optional
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.time.Duration
@@ -145,7 +143,7 @@ class GoldRateWorker @AssistedInject constructor(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 constraintsBuilder.setTriggerContentMaxDelay(Duration.ZERO)
             }
-            periodicWorkRequest = PeriodicWorkRequest.Builder(GoldRateWorker::class.java, 15, TimeUnit.MINUTES)
+            periodicWorkRequest = PeriodicWorkRequest.Builder(GoldRateWorker::class.java, 6, TimeUnit.HOURS)
                     .setInputData(data)
                     .setConstraints(constraintsBuilder.build())
                     .addTag(WORKER_TAG)

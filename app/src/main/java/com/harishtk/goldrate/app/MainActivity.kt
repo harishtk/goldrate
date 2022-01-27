@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -34,6 +35,8 @@ import androidx.navigation.compose.ComposeNavigator
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.WorkManager
 import com.harishtk.goldrate.app.data.Resource
+import com.harishtk.goldrate.app.data.repository.GoldrateRepository
+import com.harishtk.goldrate.app.data.repository.MockGoldRateRepository
 import com.harishtk.goldrate.app.ui.screens.history.HistoryActivity
 import com.harishtk.goldrate.app.ui.theme.GoldRateTheme
 import com.harishtk.goldrate.app.work.GoldRateWorker
@@ -186,12 +189,19 @@ fun MainScreen(context: Context, title: String, msg: String, mainViewModel: Main
     )
 }
 
-/*@Preview(showBackground = true)
+@Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
+    /*GoldRateTheme {
+        MainScreen(LocalContext.current, "Title", "Compose works!")
+    }*/
+
     GoldRateTheme {
-        com.harishtk.goldrate.app.ui.screens.MainScreen("Title", "Compose works!", )
+        // HistoryList(entries = repo.getEntries())
+        Column {
+            Text("Preview")
+        }
     }
-}*/
+}
 
 const val SIMPLE_DATE_TIME_PATTERN = "hh:MM aa dd-MM-yyy"

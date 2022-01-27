@@ -3,7 +3,7 @@ package com.harishtk.goldrate.app
 import androidx.lifecycle.*
 import com.harishtk.goldrate.app.data.Resource
 import com.harishtk.goldrate.app.data.entities.GoldrateEntry
-import com.harishtk.goldrate.app.data.respository.GoldrateRepository
+import com.harishtk.goldrate.app.data.repository.GoldrateRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

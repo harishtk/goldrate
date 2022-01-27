@@ -6,9 +6,9 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -22,18 +22,20 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.harishtk.goldrate.app.SIMPLE_DATE_TIME_PATTERN
 import com.harishtk.goldrate.app.data.Resource
 import com.harishtk.goldrate.app.data.entities.GoldrateEntry
+import com.harishtk.goldrate.app.data.repository.MockGoldRateRepository
 import com.harishtk.goldrate.app.ui.theme.GoldRateTheme
-import com.harishtk.goldrate.app.ui.theme.yellow700
+import com.harishtk.goldrate.app.ui.theme.purple200
+import com.harishtk.goldrate.app.ui.theme.purple200t
+import com.harishtk.goldrate.app.ui.theme.transparentGray
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.*
@@ -48,7 +50,7 @@ class HistoryActivity : AppCompatActivity() {
 
         setContent {
             GoldRateTheme {
-                Surface(color = MaterialTheme.colors.surface) {
+                Surface(color = MaterialTheme.colors.primary) {
                     HistoryScreen(LocalContext.current, viewModel = viewModel)
                 }
             }
@@ -89,18 +91,16 @@ fun HistoryScreen(context: Context, viewModel: HistoryViewModel) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun HistoryList(entries: List<GoldrateEntry>) {
-    // TODO: This ideally would be done in the ViewModel
-    val grouped = entries.groupBy { it.type }
+private fun HistoryList(entries: Map<String, List<GoldrateEntry>>) {
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        grouped.forEach { (title, data) ->
+        entries.forEach { (title, data) ->
             stickyHeader {
                 HistoryHeader(title = title)
             }
-            items(data) { entry ->
+            items(data, key = { it.timestamp }) { entry ->
                 HistoryRow(entry = entry)
             }
         }
@@ -117,7 +117,7 @@ private fun HistoryRow(entry: GoldrateEntry) {
     Row(
         modifier = Modifier
             .background(
-                color = Color(0x80CCCCCC),
+                color = transparentGray,
                 shape = RoundedCornerShape(5.dp)
             )
             .fillMaxSize()
@@ -146,7 +146,8 @@ private fun HistoryRow(entry: GoldrateEntry) {
 @Composable
 private fun HistoryHeader(title: String) {
     Row(
-        Modifier.fillMaxSize()
+        Modifier
+            .fillMaxSize()
             .background(Color.LightGray)
             .padding(4.dp)
     ) {
@@ -170,5 +171,15 @@ private fun Loading() {
         ) {
             Text(text = "Loading.. Please wait", textAlign = TextAlign.Center)
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HistoryListPreview() {
+    val repo = MockGoldRateRepository()
+    // HistoryScreen(context = LocalContext.current, repo.getGoldrateEntries().value!!)
+    GoldRateTheme {
+        HistoryList(entries = repo.getEntries())
     }
 }

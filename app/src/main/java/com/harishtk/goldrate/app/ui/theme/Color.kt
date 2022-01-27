@@ -10,3 +10,6 @@ val teal200 = Color(0xFF03DAC5)
 val whiteShade        = Color(0xFFFAFAFA)
 val lightGrey = Color(0xFFC7C7C7)
 val yellow700 = Color(0xFFFFEB3B)
+
+val transparentGray = Color(0x80CCCCCC)
+val purple200t = Color(0x80BB86FC)

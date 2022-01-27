@@ -17,7 +17,7 @@
         <activity
             android:name=".MainActivity"
             android:theme="@style/Theme.GoldRate.NoActionBar"
-            android:exported="false">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,6 +33,8 @@
         <service
             android:name="androidx.work.impl.foreground.SystemForegroundService"
             android:foregroundServiceType="dataSync"
+            android:exported="true"
+            tools:replace="android:exported"
             tools:node="merge" />
 
         <!--<provider

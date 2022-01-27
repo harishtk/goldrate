@@ -6,7 +6,7 @@ import android.content.res.Resources
 import com.github.marlonlom.utilities.timeago.TimeAgo
 import com.harishtk.goldrate.app.data.local.AppDatabase
 import com.harishtk.goldrate.app.data.local.GoldrateEntryDao
-import com.harishtk.goldrate.app.data.respository.GoldrateRepository
+import com.harishtk.goldrate.app.data.repository.GoldrateRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
