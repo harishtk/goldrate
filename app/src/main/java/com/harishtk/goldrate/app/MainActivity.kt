@@ -18,6 +18,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -33,6 +34,7 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.*
 import androidx.navigation.compose.ComposeNavigator
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.Operation
 import androidx.work.WorkManager
 import com.harishtk.goldrate.app.data.Resource
 import com.harishtk.goldrate.app.data.repository.GoldrateRepository
@@ -62,7 +64,7 @@ class MainActivity : AppCompatActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.surface) {
                     val context = LocalContext.current
-                    MainScreen(context, getString(R.string.app_name), msg, viewModel)
+                    MainScreen(context, getString(R.string.app_name), viewModel)
                 }
             }
         }
@@ -85,8 +87,13 @@ class MainActivity : AppCompatActivity() {
                 GoldRateWorker.WORKER_TAG,
                 ExistingPeriodicWorkPolicy.KEEP,
                 GoldRateWorker.GoldRateWorkerBuilder(CRAWL_URL).build()
-            )
-        msg = getString(R.string.note)
+            ).state.observe(this) { state ->
+                msg = when (state) {
+                    is Operation.State.SUCCESS -> getString(R.string.note)
+                    else -> getString(R.string.fail_note)
+                }
+                viewModel.setMessage(msg)
+            }
     }
 
     private fun checkSmsPermission() {
@@ -127,12 +134,12 @@ public fun NavGraphBuilder.composable(
     content: @Composable (NavBackStackEntry) -> Unit
 ) {
     addDestination(
-        ComposeNavigator.Destination(provider[ComposeNavigator::class], content).apply { 
+        ComposeNavigator.Destination(provider[ComposeNavigator::class], content).apply {
             this.route = route
-            arguments.forEach { (argumentName, argument) -> 
+            arguments.forEach { (argumentName, argument) ->
                 addArgument(argumentName, argument)
             }
-            deepLinks.forEach { deepLink -> 
+            deepLinks.forEach { deepLink ->
                 addDeepLink(deepLink)
             }
         }
@@ -140,8 +147,10 @@ public fun NavGraphBuilder.composable(
 }
 
 @Composable
-fun MainScreen(context: Context, title: String, msg: String, mainViewModel: MainViewModel) {
-    val lastEntry by mainViewModel.lastEntry.observeAsState()
+fun MainScreen(context: Context, title: String, mainViewModel: MainViewModel) {
+    val uiState by mainViewModel.uiState.collectAsState()
+    val msg by mainViewModel.msgFlow.collectAsState()
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -151,7 +160,10 @@ fun MainScreen(context: Context, title: String, msg: String, mainViewModel: Main
                         val historyIntent = Intent(context, HistoryActivity::class.java)
                         context.startActivity(historyIntent)
                     }) {
-                        Icon(painter = painterResource(id = R.drawable.ic_baseline_history_24), "History")
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_baseline_history_24),
+                            "History"
+                        )
                     }
                 },
                 elevation = 0.dp
@@ -172,16 +184,23 @@ fun MainScreen(context: Context, title: String, msg: String, mainViewModel: Main
                 ) {
                     Text(text = msg, textAlign = TextAlign.Center)
                     Spacer(modifier = Modifier.height(60.dp))
-                    when (lastEntry?.status) {
-                        Resource.Status.LOADING -> Text(text = "Loading data..")
-                        Resource.Status.ERROR   -> Text(text = "Failed to load data! ${lastEntry?.message}", color = Color.Black)
-                        Resource.Status.SUCCESS -> {
-                            with(lastEntry?.data!!) {
-                                val time = SimpleDateFormat(SIMPLE_DATE_TIME_PATTERN).format(Date(timestamp))
-                                Text(text = "Last: $time $type $price")
-                            }
+
+                    when {
+                        uiState.error != null -> {
+                            Text(
+                                text = "Failed to load data! ${uiState.error?.message}",
+                                color = Color.Black
+                            )
                         }
-                        else                    -> Text(text = "Something went wrong!")
+                        uiState.loading -> {
+                            CircularProgressIndicator()
+                        }
+                        else -> {
+                            val entry = uiState.lastGoldrateEntry!!
+                            val time =
+                                SimpleDateFormat(SIMPLE_DATE_TIME_PATTERN).format(Date(entry.timestamp))
+                            Text(text = "Last: $time ${entry.type} ${entry.price}")
+                        }
                     }
                 }
             }

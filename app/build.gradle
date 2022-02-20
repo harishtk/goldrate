@@ -13,7 +13,7 @@ ext {
     versionMinor = 1                // minor changes
     versionPatch = 1                // bug fixes
     versionClassifier = "beta"      // version classifier eg. alpha (a), beta (b)
-    isSnapshot = false              // test build before production
+    isSnapshot = false              // test build before pr oduction
 }
 
 android {
@@ -60,7 +60,6 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-
     lintOptions {
         // Returns whether lint should be quiet (for example, not write informational messages such as paths to report files written)
         quiet true
@@ -86,15 +85,23 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion compose_version
     }
+
+    configurations {
+        all {
+            resolutionStrategy {
+                force 'com.jakewharton.timber:timber:5.0.1'
+            }
+        }
+    }
 }
 
 dependencies {
     implementation(fileTree(include: ['*.jar', '*.aar'], dir: 'libs'))
 
-    implementation 'androidx.core:core-ktx:1.3.2'
+    implementation 'androidx.core:core-ktx:1.7.0'
 //    def kotlin_version = "1.4.30"
 //    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'androidx.activity:activity-compose:1.0.0-beta01'
+    implementation 'androidx.activity:activity-compose:1.4.0'
 
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
@@ -111,9 +118,10 @@ dependencies {
     implementation "androidx.compose.ui:ui-tooling:$compose_version"
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
     implementation("androidx.navigation:navigation-compose:2.4.0-rc01")
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0"
 
     //Lifecycle
-    def lifecycle_version = "2.2.0"
+    def lifecycle_version = "2.4.1"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
@@ -121,21 +129,22 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.0-alpha06'
 
     //Kotlin Coroutines
-    def coroutines_android_version = '1.3.7'
+    def coroutines_android_version = '1.5.2'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_android_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_android_version"
 
     //Hilt
-    implementation 'com.google.dagger:hilt-android:2.36'
+    implementation 'com.google.dagger:hilt-android:2.38.1'
     implementation 'androidx.hilt:hilt-work:1.0.0'
     implementation "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03"
-    kapt 'com.google.dagger:hilt-android-compiler:2.36'
+    kapt 'com.google.dagger:hilt-android-compiler:2.38.1'
     kapt "androidx.hilt:hilt-compiler:1.0.0"
 
     //Room
     def room_version = "2.4.1"
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
+    implementation("androidx.room:room-paging:$room_version")
     kapt "androidx.room:room-compiler:$room_version"
 
     //Navigation
@@ -149,6 +158,10 @@ dependencies {
     implementation "androidx.work:work-runtime:$work_version"
     implementation "androidx.work:work-runtime-ktx:$work_version"
 
+    def paging_version = "3.1.0"
+    implementation "androidx.paging:paging-runtime-ktx:$paging_version"
+    implementation("androidx.paging:paging-compose:1.0.0-alpha14")
+
     // Okhttp
     implementation("com.squareup.okhttp3:okhttp:4.7.2")
     implementation('com.squareup.okhttp3:logging-interceptor:4.7.2')
@@ -156,6 +169,9 @@ dependencies {
     // TimeAgo
     def timeAgoVersion = "4.0.3"
     implementation("com.github.marlonlom:timeago:$timeAgoVersion")
+
+    // Timber
+    // implementation 'com.jakewharton.timber:timber:5.0.1'
 
     // Unit testing
     testImplementation 'androidx.test.ext:junit:1.1.2'

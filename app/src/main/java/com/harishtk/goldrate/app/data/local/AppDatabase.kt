@@ -23,3 +23,5 @@ abstract class AppDatabase : RoomDatabase() {
                 .build()
     }
 }
+
+const val DEFAULT_PAGE_SIZE = 15

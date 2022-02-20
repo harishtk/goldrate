@@ -6,19 +6,18 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,15 +27,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.paging.LoadState
+import androidx.paging.PagingData
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 import com.harishtk.goldrate.app.SIMPLE_DATE_TIME_PATTERN
-import com.harishtk.goldrate.app.data.Resource
 import com.harishtk.goldrate.app.data.entities.GoldrateEntry
 import com.harishtk.goldrate.app.data.repository.MockGoldRateRepository
 import com.harishtk.goldrate.app.ui.theme.GoldRateTheme
-import com.harishtk.goldrate.app.ui.theme.purple200
-import com.harishtk.goldrate.app.ui.theme.purple200t
 import com.harishtk.goldrate.app.ui.theme.transparentGray
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.Flow
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -60,7 +62,6 @@ class HistoryActivity : AppCompatActivity() {
 
 @Composable
 fun HistoryScreen(context: Context, viewModel: HistoryViewModel) {
-    val entries by viewModel.goldrateEntries.observeAsState()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -73,37 +74,86 @@ fun HistoryScreen(context: Context, viewModel: HistoryViewModel) {
                 }
             )
         },
-        content = {
-            when (entries?.status) {
-                Resource.Status.SUCCESS ->
-                    if (entries?.data != null) {
-                        HistoryList(entries = entries?.data!!)
-                    } else {
-                        Text("No data")
-                    }
-                Resource.Status.ERROR -> Text("No data: ${entries?.message}")
-                Resource.Status.LOADING -> Loading()
-                else -> Text(text = "Failed to fetch")
-            }
-        }
+        content = { HistoryList(pagedEntries = viewModel.pagedGoldRateEntries) }
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
-private fun HistoryList(entries: Map<String, List<GoldrateEntry>>) {
+private fun HistoryList(pagedEntries: Flow<PagingData<GoldrateEntry>>) {
+    val lazyGoldRateItems: LazyPagingItems<GoldrateEntry> = pagedEntries.collectAsLazyPagingItems()
+
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        entries.forEach { (title, data) ->
-            stickyHeader {
-                HistoryHeader(title = title)
+        items(lazyGoldRateItems, key = { it.timestamp }) { entry ->
+            AnimatedVisibility(
+                visible = true,
+                enter = slideInVertically() + expandVertically(expandFrom = Alignment.Bottom)
+            ) {
             }
-            items(data, key = { it.timestamp }) { entry ->
-                HistoryRow(entry = entry)
+            HistoryRow(entry = entry!!)
+        }
+
+        lazyGoldRateItems.apply {
+            when {
+                loadState.refresh is LoadState.Loading -> {
+                    // Initial loading, show full screen loader indictor
+                    item {
+                        Column(
+                            modifier = Modifier.fillParentMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                "Loading..",
+                                style = MaterialTheme.typography.subtitle2,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                            CircularProgressIndicator(color = MaterialTheme.colors.secondary)
+                        }
+                    }
+                }
+                loadState.append is LoadState.Loading -> {
+                    // Load more is loading
+                    item {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Loading items...")
+                            CircularProgressIndicator(color = MaterialTheme.colors.secondary)
+                        }
+                    }
+                }
+                loadState.refresh is LoadState.Error -> {
+                    val e = lazyGoldRateItems.loadState.refresh as LoadState.Error
+                    item {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier.fillParentMaxSize()
+                        ) {
+                            Text(
+                                text = e.error.localizedMessage!!,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                            Button(
+                                onClick = { retry() },
+                                shape = RoundedCornerShape(15.dp, 20.dp, 35.dp, 35.dp),
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .background(color = MaterialTheme.colors.secondary)
+                            ) {
+                                Text(text = "RETRY", modifier = Modifier.padding(12.dp))
+                            }
+                        }
+                    }
+                }
             }
         }
+
         item {
             Box(
                 Modifier.height(60.dp)
@@ -180,6 +230,6 @@ fun HistoryListPreview() {
     val repo = MockGoldRateRepository()
     // HistoryScreen(context = LocalContext.current, repo.getGoldrateEntries().value!!)
     GoldRateTheme {
-        HistoryList(entries = repo.getEntries())
+         HistoryList(pagedEntries = repo.getGoldrateEntries())
     }
 }
